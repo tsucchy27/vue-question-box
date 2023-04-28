@@ -15,7 +15,7 @@ const port = 3000;
 
 // MariaDBの設定
 const con = mysql.createConnection({
-  host: 'localhost',
+  host: '127.0.0.1',
   user: 'tsucchy',
   password: 'n2u5xqlL',
   database: 'questionDB'
@@ -31,11 +31,6 @@ app.use(cors({
 
 app.listen(port, () => {
   console.log('listen: ' + port);
-});
-
-//@ts-ignore TS6133: 'req' is declared but its value is never read.
-app.get('/', (req: any, res: any) => {
-  res.send('Hello Express!');
 });
 
 // ログイン処理  
@@ -130,3 +125,58 @@ app.post('/register', (req: any, res: any) => {
   });
 });
 
+// 受信箱
+app.get('/messages', (req: any, res: any) => {
+  
+  // クエリがなかったら
+  if(!req.query.userid) {
+    // 予期せぬエラー
+    return res.send("ERROR: クエリが存在しない");
+  }
+  // 質問一覧を取得
+  var sql: string = `select * from question where userid="${req.query.userid}"`;
+  con.query(sql, function(err: any, result: any, fields: any) {
+    if(err) {
+      console.log("[express]error");
+      // 予期せぬエラー
+      throw new Error("[受信箱]SQL失敗");
+    }
+
+    console.log('[express]result=>');
+    console.log(result);
+
+    // 正常終了 APIエンドポイントを設定後リダイレクト
+    app.get('/api/messages', (req: any, res: any) => {
+      res.json(result);
+    });
+    res.redirect('http://localhost:5173/messages');
+  });
+});
+
+// マイページアクセス時
+app.get('/mypage', (req: any, res: any) => {
+  
+  // クエリがなかったら
+  if(!req.query.userid) {
+    // 予期せぬエラー
+    return res.send("ERROR: クエリが存在しない");
+  } 
+
+  // ログイン情報を取得
+  var sql: string = `select userid, email from user where userid="${req.query.userid}"`;
+  con.query(sql, function(err: any, result: any, fields: any) {
+    if(err) {
+      // 予期せぬエラー
+      throw new Error("[マイページ]SQL失敗");
+    }
+    
+    console.log('[express]result=>');
+    console.log(result);
+
+    // 正常終了 APIエンドポイント
+    app.get('/api/mypage', (req: any, res: any) => {
+      res.json(result);
+    });
+    res.redirect('http://localhost:5173/mypage');
+  });
+});

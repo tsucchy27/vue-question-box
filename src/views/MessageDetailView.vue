@@ -1,12 +1,8 @@
 <template>
   <div class="message-detail">
     <router-link to="/messages">受信箱に戻る</router-link>
-    <h2 class="text-3xl">タイトル</h2>
-    <p>{{ question.title }}</p>
-    <h2 class="text-3xl">テキスト</h2>
-    <p>{{ question.text }}</p>
-    <h2 class="text-3xl">投稿日時</h2>
-    <p>{{ question.created_at }}</p>
+    <h1 class="mx-auto">質問詳細ページ</h1>
+    <v-card :title="ques.title" :subtitle="ques.created_at" :text="ques.text"></v-card>
   </div>
 </template>
     
@@ -22,12 +18,19 @@ export default defineComponent({
     QuestionCard
   }, 
 
+  mounted() {
+    if (localStorage.getItem('ques') != null) {
+      // @ts-ignore: ts2345
+      this.ques = JSON.parse(localStorage.getItem('ques'));
+    }
+  },
+
   data() {
     return {
-      question: {
-        title: 'タイトル1',
-        text: 'テキスト1',
-        created_at: '更新日時：2023/04/11'
+      ques: {
+        title: "",
+        text: "",
+        created_at: ""
       }
     }
   },

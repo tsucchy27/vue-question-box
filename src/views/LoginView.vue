@@ -20,20 +20,20 @@ import { useUserStore } from "@/store/userStore";
 export default defineComponent({
   name: "loginView",
 
-  setup() {
-    const store = useUserStore();
-    console.log("[vue]store=>");
-    console.log(store); //ストアのインスタンス確認する記述（後で削除）
-    return {
-      store,
-      setValue: (id: string, pass: string) => {
-        store.$patch({
-          id: id,
-          password: pass
-        });
-      }
-    }
-  },
+  // setup() {
+  //   const store = useUserStore();
+  //   console.log("[vue]store=>");
+  //   console.log(store); //ストアのインスタンス確認する記述（後で削除）
+  //   return {
+  //     store,
+  //     setValue: (id: string, pass: string) => {
+  //       store.$patch({
+  //         id: id,
+  //         password: pass
+  //       });
+  //     }
+  //   }
+  // },
   data() {
     return {
       id: "",
@@ -54,9 +54,10 @@ export default defineComponent({
           // ログイン成功
           console.log("[vue]res=>");
           console.log(res);
-          this.setValue(params.id, params.password);
-          console.log("[vue]localStorage=>");
-          console.log(window.localStorage.getItem("login_user"));
+          // this.setValue(params.id, params.password);
+          this.$cookies.set('userId', this.id);
+          console.log("[vue]cookies=>");
+          console.log(this.$cookies.get('userId'));
           this.$router.push('/');
         })
         .catch((e) => {

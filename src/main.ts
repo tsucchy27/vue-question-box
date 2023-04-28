@@ -7,10 +7,11 @@ import { createPinia } from "pinia";
 import { createPersistedState } from "pinia-plugin-persistedstate"
 import axios from "axios";
 import VueAxios from "vue-axios";
+import VueCookies from "vue-cookies"
 
 loadFonts();
 
 const pinia = createPinia();
 pinia.use(createPersistedState());
 
-createApp(App).use(router).use(vuetify).use(pinia).mount("#app");
+createApp(App).use(router).use(vuetify).use(pinia).use(VueCookies).mount("#app");

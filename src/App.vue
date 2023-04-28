@@ -12,7 +12,9 @@
             <v-list-item-title>
               <!--受信箱はバックエンドに飛ばす-->
               <a v-if="item.id==3" :href="item.url">{{ item.name }}</a>
-              <router-link v-if="item.id!=3" :to="item.url">{{ item.name }}</router-link>
+              <!--ログアウト時はlogout()を発火-->
+              <a v-else-if="item.id==6" :href="item.url" @click="logout">{{ item.name }}</a>
+              <router-link v-else :to="item.url">{{ item.name }}</router-link>
             </v-list-item-title>
           </v-list-item>
         </v-list-item-group>
@@ -29,9 +31,20 @@
 //let id: number = 0
 
 import { defineComponent } from "vue";
+import { useUserStore } from "@/store/userStore";
 
 export default defineComponent({
   name: "App",
+
+  // setup() {
+  //   const store = useUserStore();
+  //   return {
+  //     store,
+  //     getUserId: () =>  {
+  //       store.$state.id;
+  //     }
+  //   }
+  // },
 
   data() {
     return {
@@ -40,12 +53,22 @@ export default defineComponent({
       menuItems: [
         {id: 1, name: 'ホーム', url: '/'},
         {id: 2, name: 'マイページ', url: '/mypage'},
-        {id: 3, name: '受信箱', url: 'http://localhost:3000/messages'},
+        {id: 3, name: '受信箱', url: `http://localhost:3000/messages?userid=${this.$cookies.get('userId')}`},
         {id: 4, name: '送る', url: '/send'},
         {id: 5, name: 'ログイン', url: '/login'},
+        {id: 6, name: 'ログアウト', url: '/'},
         {id: 99, name: 'test', url: '/test'}
       ]
     };
   },
+
+  methods: {
+    logout() {
+      // 保持されたユーザIDの削除
+      this.$cookies.remove('userId');
+      // 保持された質問情報の削除
+      localStorage.removeItem('ques');
+    }
+  }
 });
 </script>
